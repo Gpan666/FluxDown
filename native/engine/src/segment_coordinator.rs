@@ -6559,6 +6559,7 @@ mod tests {
             referrer: String::new(),
             extra_headers: std::collections::HashMap::new(),
             body: None,
+            ..Default::default()
         };
         let result = super::run_coordinated_download(
             "second",
@@ -6724,6 +6725,7 @@ mod tests {
                 referrer: String::new(),
                 extra_headers: std::collections::HashMap::new(),
                 body: None,
+                ..Default::default()
             },
         ));
         let pool = crate::cdn::NodePool::single(

@@ -1570,6 +1570,8 @@ fn spec_without_browser_ua(spec: &RequestSpec) -> RequestSpec {
             .map(|(k, v)| (k.clone(), v.clone()))
             .collect(),
         body: spec.body.clone(),
+        pins: spec.pins,
+        origin_headers: spec.origin_headers.clone(),
     }
 }
 
@@ -6984,6 +6986,7 @@ mod tests {
             referrer: String::new(),
             extra_headers: std::collections::HashMap::new(),
             body: None,
+            ..Default::default()
         };
         assert!(!spec.is_get_like());
     }
@@ -7038,6 +7041,7 @@ mod tests {
             referrer: String::new(),
             extra_headers: std::collections::HashMap::new(),
             body: Some(super::RequestBodyDecoded::Urlencoded("k=v".to_string())),
+            ..Default::default()
         };
         let req = super::build_request(&client, "https://example.com", reqwest::Method::GET, &spec);
         let built = req
@@ -7063,6 +7067,7 @@ mod tests {
                 ("autodl".to_string(), "2".to_string()),
                 ("updates".to_string(), "1".to_string()),
             ])),
+            ..Default::default()
         };
         let req = super::build_request(
             &client,
@@ -7097,6 +7102,7 @@ mod tests {
             referrer: "https://referrer.example.com/page".to_string(),
             extra_headers: extra,
             body: None,
+            ..Default::default()
         };
         let req = super::build_request(
             &client,
@@ -7141,6 +7147,7 @@ mod tests {
                 referrer: bogus.to_string(),
                 extra_headers: std::collections::HashMap::new(),
                 body: None,
+                ..Default::default()
             };
             let built = super::build_request(
                 &client,
@@ -7591,6 +7598,7 @@ mod single_resume_tests {
             referrer: String::new(),
             extra_headers: std::collections::HashMap::new(),
             body: None,
+            ..Default::default()
         };
         let res = download_single(
             "t1",
@@ -7986,6 +7994,7 @@ mod single_resume_tests {
             referrer: String::new(),
             extra_headers: std::collections::HashMap::new(),
             body: None,
+            ..Default::default()
         });
         let attempt = || {
             download_single(
