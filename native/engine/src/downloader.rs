@@ -669,27 +669,6 @@ pub(crate) fn decode_captured_body(
     }
 }
 
-/// [`decode_captured_body`] 的逆：表单按 key 聚合（同 key 的值保持出现顺序）。
-pub(crate) fn encode_decoded_body(body: &RequestBodyDecoded) -> CapturedRequestBody {
-    use base64::Engine;
-    match body {
-        RequestBodyDecoded::Form(pairs) => {
-            let mut fields: std::collections::HashMap<String, Vec<String>> =
-                std::collections::HashMap::new();
-            for (k, v) in pairs {
-                fields.entry(k.clone()).or_default().push(v.clone());
-            }
-            CapturedRequestBody::FormData { fields }
-        }
-        RequestBodyDecoded::Urlencoded(raw) => CapturedRequestBody::Urlencoded { raw: raw.clone() },
-        RequestBodyDecoded::Raw {
-            bytes,
-            content_type,
-        } => CapturedRequestBody::Raw {
-            bytes_b64: base64::engine::general_purpose::STANDARD.encode(bytes),
-            content_type: content_type.clone(),
-        },
-    }
 }
 
 impl RequestSpec {
@@ -815,6 +794,7 @@ pub fn build_request(
         req = req.header(reqwest::header::REFERER, &spec.referrer);
     }
     req = apply_extra_headers(req, &spec.extra_headers);
+    req = apply_origin_headers(req, url, &spec.origin_headers);
 
     if attaches_body && let Some(body) = &spec.body {
         match body {
