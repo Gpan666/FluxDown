@@ -669,8 +669,6 @@ pub(crate) fn decode_captured_body(
     }
 }
 
-}
-
 impl RequestSpec {
     /// 默认 GET、无 cookies/headers/body——用于 download_manager 内部的"裸"
     /// HTTP 请求场景(如 BT/HLS 元数据获取,无浏览器会话上下文)。
