@@ -2,13 +2,15 @@ import { afterAll, beforeEach, expect, mock, test } from "bun:test";
 import { bustApiCaches } from "../src/lib/api-cache";
 import { markReleaseViewer, resetReleaseViewers } from "../src/lib/download-gate";
 import { resetDownloadBans } from "../src/lib/download-ban";
+import * as actualGeoip from "../src/lib/geoip";
 
 let configured = true;
 let cdnConfigured = true;
 const MAINLAND_IP = "114.114.114.114";
 const signatures: string[] = [];
 mock.module("astro:env/server", () => ({ GITHUB_TOKEN: "", GITHUB_REPO: "owner/repo" }));
-mock.module("../src/lib/geoip", () => ({ isMainlandChinaIp: (ip: string) => ip === MAINLAND_IP }));
+// bun 的 mock.module 对整个测试进程生效：必须保留真实导出，否则 geoip.test.ts 取不到 Ip2RegionV4。
+mock.module("../src/lib/geoip", () => ({ ...actualGeoip, isMainlandChinaIp: (ip: string) => ip === MAINLAND_IP }));
 const ossMock = () => ({
   ossConfigured: configured,
   cdnConfigured,
